@@ -24,18 +24,10 @@ async def cmd_start(message: types.Message):
     us = udb.get_user_by_user_id(mc.id)
     if us is None:
         log.info(f'Регистрация нового пользователя {mc.username or ""} (id:{mc.id})')
+        udb.users_add_new_from_bot(mc.id, mc.username,  mc.first_name, mc.last_name, '')
         await message.answer("Добро пожаловать, хотя не знаю чем смогу помочь 🥲")
-        return
-    if mc.username is not None:
-        db.update_users_tg_username(us[0], mc.username)
-    if us[5] != '🤖':
-        log.warning(f'Попытка запустить бот игроком {us[5]}{us[3]}: @{mc.username} (id:{mc.id})')
-        await message.answer("Запрос этой информации недоступен для вашей расы!\r\nЖдем вас в Аккретии")
-        return
-    if us[12] == 0:
-        pass
-    log.info(f'Авторизация игрока {us[5]}{us[3]}: @{mc.username} (id:{mc.id})')
-    await message.answer(f'Добро пожаловать {us[3]}')
+    else:
+        await message.answer("Добро пожаловать, что изволите?")
 
 
 @router.message(F.chat.type == 'private', Command(commands=['help']))

@@ -28,3 +28,21 @@ def get_user_by_user_id(user_id):
         return res
     finally:
         si.db.putconn(conn)
+
+
+def users_add_new_from_bot(user_id, username, first_name, last_name, middle_name):
+    sql = '''INSERT INTO users
+    (user_id, username, first_name, last_name, middle_name) 
+    values (%s, %s, %s, %s, %s)
+    on conflict (user_id) do nothing;
+    '''
+    try:
+        with si.db.getconn() as conn:
+            with conn.cursor() as cursor:
+                data = [user_id, username, first_name, last_name, middle_name]
+                cursor.execute(sql, data)
+            conn.commit()
+    except OperationalError:
+        log.exception(f"Ошибка добавления пользователя: '{username}' в таблицу 'users'")
+    finally:
+        si.db.putconn(conn)
